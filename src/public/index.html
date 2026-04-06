@@ -30,7 +30,9 @@
       .card {
         background: #fff;
         border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+        box-shadow:
+          0 1px 3px rgba(0, 0, 0, 0.08),
+          0 4px 12px rgba(0, 0, 0, 0.04);
         max-width: 420px;
         width: 100%;
         padding: 2.5rem 2rem;
@@ -95,7 +97,9 @@
         color: #1a202c;
         font-weight: 500;
         font-size: 0.9375rem;
-        transition: border-color 0.15s, background 0.15s;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
       }
       .link:hover {
         border-color: #5f9ea0;
@@ -156,7 +160,10 @@
         <a
           class="bookmarklet-link"
           href="javascript:void((function(){if(!location.hostname.includes('booking.goose.pet')){alert('Navigate to booking.goose.pet first');return}var e=document.getElementById('goothe');if(e){e.remove();return}var b='https://jgeurts.github.io/goothe/';var l=document.createElement('link');l.rel='stylesheet';l.href=b+'goothe.css';document.head.appendChild(l);var s=document.createElement('script');s.type='module';s.src=b+'goothe.js';document.head.appendChild(s)})())"
-          onclick="event.preventDefault();alert('Drag this link to your bookmarks bar — don\u0027t click it here.')"
+          onclick="
+            event.preventDefault();
+            alert('Drag this link to your bookmarks bar — don\u0027t click it here.');
+          "
         >
           Goothe
         </a>
@@ -165,7 +172,12 @@
 
       <div class="section">
         <p class="section-label">Bay View Bark</p>
-        <a class="link" href="https://booking.goose.pet/bay-view-bark/" target="_blank" rel="noopener noreferrer">
+        <a
+          class="link"
+          href="https://booking.goose.pet/bay-view-bark/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Open Booking Site
           <span class="arrow">&rsaquo;</span>
         </a>
@@ -194,7 +206,10 @@
         <a
           class="bookmarklet-link dev-bookmarklet"
           href="javascript:void((function(){if(!location.hostname.includes('booking.goose.pet')){alert('Navigate to booking.goose.pet first');return}var e=document.getElementById('goothe');if(e){e.remove();return}var b='http://localhost:3000/goothe/';var l=document.createElement('link');l.rel='stylesheet';l.href=b+'goothe.css';document.head.appendChild(l);var s=document.createElement('script');s.type='module';s.src=b+'goothe.js';document.head.appendChild(s)})())"
-          onclick="event.preventDefault();alert('Drag this link to your bookmarks bar — don\u0027t click it here.')"
+          onclick="
+            event.preventDefault();
+            alert('Drag this link to your bookmarks bar — don\u0027t click it here.');
+          "
         >
           Goothe (Dev)
         </a>
