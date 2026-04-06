@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+
+  --color-bvb-teal: #5f9ea0;
+  --color-bvb-teal-d: #4a8a8c;
+  --color-bvb-teal-l: #7eb8ba;
+  --color-bvb-gold: #d4a843;
+  --color-bvb-gold-d: #b8922e;
+  --color-bvb-gold-l: #e4c26a;
+
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8f9fa;
+  --color-border: #e2e8f0;
+  --color-text: #1a202c;
+  --color-text-secondary: #64748b;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+}
+
+@layer base {
+  html {
+    @apply touch-manipulation overflow-hidden bg-surface text-text;
+  }
+
+  html * {
+    max-height: 10000000px;
+  }
+
+  body {
+    @apply fixed inset-0 overflow-auto font-sans;
+  }
+
+  button,
+  select {
+    @apply select-none;
+  }
+}

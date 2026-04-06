@@ -1,0 +1,8 @@
+node_modules
+dist
+tsconfig.tsbuildinfo
+.coverage
+.DS_Store
+.vite
+.idea
+package-lock.json
