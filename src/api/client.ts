@@ -1,4 +1,4 @@
-import { API_BASE } from '@/lib/defaults';
+import { API_BASE } from "@/lib/defaults";
 
 /** Lightweight fetch wrapper for the Goose API */
 
@@ -16,7 +16,7 @@ export class GooseClient {
   private headers(): HeadersInit {
     return {
       Authorization: `Bearer ${this.token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
   }
 
@@ -32,7 +32,7 @@ export class GooseClient {
 
   async post<T = any>(path: string, body?: unknown): Promise<T> {
     const response = await fetch(`${API_BASE}${path}`, {
-      method: 'POST',
+      method: "POST",
       headers: this.headers(),
       body: body ? JSON.stringify(body) : undefined,
     });
@@ -44,7 +44,7 @@ export class GooseClient {
 
   async put<T = any>(path: string, body: unknown): Promise<T> {
     const response = await fetch(`${API_BASE}${path}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: this.headers(),
       body: JSON.stringify(body),
     });
@@ -60,7 +60,7 @@ export class ApiError extends Error {
 
   constructor(status: number, body: string) {
     super(`API error ${status}: ${body}`);
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.status = status;
   }
 

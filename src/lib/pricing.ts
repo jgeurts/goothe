@@ -1,4 +1,4 @@
-import { TAX_RATE } from './defaults';
+import { TAX_RATE } from "./defaults";
 
 /** Client-side price estimation */
 
@@ -24,13 +24,10 @@ export function estimatePrice(opts: {
 }): PriceEstimate {
   const boardingSubtotal = opts.nights * opts.rate;
 
-  const pmPickupMonFri =
-    opts.pmPickup && opts.hasWeekdayNights ? opts.pmMonFriRate : null;
-  const pmPickupSatSun =
-    opts.pmPickup && opts.hasWeekendNights ? opts.pmSatSunRate : null;
+  const pmPickupMonFri = opts.pmPickup && opts.hasWeekdayNights ? opts.pmMonFriRate : null;
+  const pmPickupSatSun = opts.pmPickup && opts.hasWeekendNights ? opts.pmSatSunRate : null;
 
-  const subtotal =
-    boardingSubtotal + (pmPickupMonFri ?? 0) + (pmPickupSatSun ?? 0);
+  const subtotal = boardingSubtotal + (pmPickupMonFri ?? 0) + (pmPickupSatSun ?? 0);
   const tax = Math.round(subtotal * TAX_RATE * 100) / 100;
   const total = Math.round((subtotal + tax) * 100) / 100;
 

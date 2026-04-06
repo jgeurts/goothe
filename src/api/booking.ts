@@ -1,5 +1,5 @@
-import type { GooseClient } from './client';
-import type { PetProfile, ReservationResponse, SearchResult } from './types';
+import type { GooseClient } from "./client";
+import type { PetProfile, ReservationResponse, SearchResult } from "./types";
 
 interface SearchBody {
   petGroups: Array<{
@@ -39,11 +39,11 @@ export async function searchPrimary(
   serviceType: string,
   startDate: string,
   endDate: string,
-  pet: PetProfile
+  pet: PetProfile,
 ): Promise<SearchResult> {
   return client.post(
     `/booking/search/${serviceType}?type=PRIMARY&start=${startDate}&end=${endDate}`,
-    buildSearchBody(pet)
+    buildSearchBody(pet),
   );
 }
 
@@ -53,11 +53,11 @@ export async function searchPetAddons(
   serviceType: string,
   startDate: string,
   endDate: string,
-  pet: PetProfile
+  pet: PetProfile,
 ): Promise<SearchResult> {
   return client.post(
     `/booking/search/${serviceType}?type=PET&start=${startDate}&end=${endDate}`,
-    buildSearchBody(pet)
+    buildSearchBody(pet),
   );
 }
 
@@ -71,9 +71,9 @@ export async function createReservation(
     endDate: string;
     primaryOfferId: string;
     petOfferIds: Array<{ id: string }>;
-  }
+  },
 ): Promise<ReservationResponse> {
-  return client.post('/booking/reservation', {
+  return client.post("/booking/reservation", {
     serviceTypeName: opts.serviceType,
     isSubStatusV2: true,
     pets: [
@@ -99,7 +99,7 @@ export async function createReservation(
             id: opts.primaryOfferId,
             qty: 1,
             serviceOffers: [],
-            petOffers: opts.petOfferIds.map(o => ({
+            petOffers: opts.petOfferIds.map((o) => ({
               id: o.id,
               qty: 1,
               petIndex: 0,
@@ -127,7 +127,7 @@ export async function updateReservation(
     city: string;
     state: string;
     zip: string;
-  }
+  },
 ): Promise<unknown> {
   return client.put(`/booking/reservation/${orderId}`, {
     data: {
@@ -146,7 +146,7 @@ export async function updateReservation(
           city: opts.city,
           state: opts.state,
           zip: opts.zip,
-          country: 'US',
+          country: "US",
         },
       },
     },

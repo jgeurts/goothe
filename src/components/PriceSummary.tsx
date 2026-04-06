@@ -1,17 +1,13 @@
-import type { PriceEstimate } from '@/lib/pricing';
+import type { PriceEstimate } from "@/lib/pricing";
 
 interface PriceSummaryProps {
   estimate: PriceEstimate | null;
-  mode: 'boarding' | 'daycare';
+  mode: "boarding" | "daycare";
   daycareRate?: number;
 }
 
-export default function PriceSummary({
-  estimate,
-  mode,
-  daycareRate,
-}: PriceSummaryProps) {
-  if (!estimate && mode === 'daycare' && daycareRate) {
+export default function PriceSummary({ estimate, mode, daycareRate }: PriceSummaryProps) {
+  if (!estimate && mode === "daycare" && daycareRate) {
     // Simple daycare display
     const tax = Math.round(daycareRate * 0.079 * 100) / 100;
     const total = Math.round((daycareRate + tax) * 100) / 100;
@@ -39,36 +35,19 @@ export default function PriceSummary({
       </h3>
       <div className="space-y-1.5">
         <Row
-          label={`Boarding: ${estimate.nights} night${estimate.nights !== 1 ? 's' : ''} × $${estimate.boardingRate.toFixed(2)}`}
+          label={`Boarding: ${estimate.nights} night${estimate.nights !== 1 ? "s" : ""} × $${estimate.boardingRate.toFixed(2)}`}
           value={`$${estimate.boardingSubtotal.toFixed(2)}`}
         />
         {estimate.pmPickupMonFri !== null && (
-          <Row
-            label="PM Pickup Mon-Fri"
-            value={`$${estimate.pmPickupMonFri.toFixed(2)}`}
-          />
+          <Row label="PM Pickup Mon-Fri" value={`$${estimate.pmPickupMonFri.toFixed(2)}`} />
         )}
         {estimate.pmPickupSatSun !== null && (
-          <Row
-            label="PM Pickup Sat/Sun"
-            value={`$${estimate.pmPickupSatSun.toFixed(2)}`}
-          />
+          <Row label="PM Pickup Sat/Sun" value={`$${estimate.pmPickupSatSun.toFixed(2)}`} />
         )}
         <div className="border-t border-border my-2" />
-        <Row
-          label="Subtotal"
-          value={`$${estimate.subtotal.toFixed(2)}`}
-        />
-        <Row
-          label="Tax (7.9%)"
-          value={`$${estimate.tax.toFixed(2)}`}
-          muted
-        />
-        <Row
-          label="Estimated Total"
-          value={`$${estimate.total.toFixed(2)}`}
-          bold
-        />
+        <Row label="Subtotal" value={`$${estimate.subtotal.toFixed(2)}`} />
+        <Row label="Tax (7.9%)" value={`$${estimate.tax.toFixed(2)}`} muted />
+        <Row label="Estimated Total" value={`$${estimate.total.toFixed(2)}`} bold />
       </div>
     </div>
   );
@@ -86,7 +65,9 @@ function Row({
   muted?: boolean;
 }) {
   return (
-    <div className={`flex justify-between text-sm ${bold ? 'font-semibold text-base' : ''} ${muted ? 'text-text-secondary' : ''}`}>
+    <div
+      className={`flex justify-between text-sm ${bold ? "font-semibold text-base" : ""} ${muted ? "text-text-secondary" : ""}`}
+    >
       <span>{label}</span>
       <span>{value}</span>
     </div>

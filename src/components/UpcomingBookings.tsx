@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import type { OrderSummary } from '@/api/types';
-import { parseDate } from '@/lib/dates';
+import type { OrderSummary } from "@/api/types";
+import { parseDate } from "@/lib/dates";
 
 interface UpcomingBookingsProps {
   orders: OrderSummary[];
@@ -11,7 +11,7 @@ export default function UpcomingBookings({ orders }: UpcomingBookingsProps) {
   const [expanded, setExpanded] = useState(false);
 
   const upcoming = orders.filter(
-    o => o.orderStatus === 'CONFIRMED' || o.orderStatus === 'PENDING'
+    (o) => o.orderStatus === "CONFIRMED" || o.orderStatus === "PENDING",
   );
 
   if (upcoming.length === 0) return null;
@@ -28,7 +28,7 @@ export default function UpcomingBookings({ orders }: UpcomingBookingsProps) {
           width="16"
           height="16"
           viewBox="0 0 16 16"
-          className={`transition-transform ${expanded ? 'rotate-180' : ''}`}
+          className={`transition-transform ${expanded ? "rotate-180" : ""}`}
         >
           <path
             d="M4 6L8 10L12 6"
@@ -42,7 +42,7 @@ export default function UpcomingBookings({ orders }: UpcomingBookingsProps) {
       </button>
       {expanded && (
         <div className="border-t border-border divide-y divide-border">
-          {upcoming.map(order => (
+          {upcoming.map((order) => (
             <OrderRow key={order.id} order={order} />
           ))}
         </div>
@@ -54,33 +54,25 @@ export default function UpcomingBookings({ orders }: UpcomingBookingsProps) {
 function OrderRow({ order }: { order: OrderSummary }) {
   const invoice = order.invoices[0];
   const period = invoice?.period[0];
-  const primaryItem = invoice?.items.find(i => i.offerType === 'PRIMARY');
+  const primaryItem = invoice?.items.find((i) => i.offerType === "PRIMARY");
 
-  const start = period?.startDate
-    ? parseDate(period.startDate)
-    : null;
-  const end = period?.endDate
-    ? parseDate(period.endDate)
-    : null;
+  const start = period?.startDate ? parseDate(period.startDate) : null;
+  const end = period?.endDate ? parseDate(period.endDate) : null;
 
   const dateDisplay =
-    start && end
-      ? `${formatShortDate(start)} – ${formatShortDate(end)}`
-      : 'Unknown dates';
+    start && end ? `${formatShortDate(start)} – ${formatShortDate(end)}` : "Unknown dates";
 
   return (
     <div className="px-4 py-3 flex justify-between items-center text-sm">
       <div>
-        <p className="font-medium">{primaryItem?.displayName ?? 'Booking'}</p>
+        <p className="font-medium">{primaryItem?.displayName ?? "Booking"}</p>
         <p className="text-text-secondary text-xs">{dateDisplay}</p>
       </div>
       <div className="text-right">
         <p className="font-semibold">${order.total.toFixed(2)}</p>
         <p
           className={`text-xs ${
-            order.orderStatus === 'CONFIRMED'
-              ? 'text-success'
-              : 'text-bvb-gold'
+            order.orderStatus === "CONFIRMED" ? "text-success" : "text-bvb-gold"
           }`}
         >
           {order.orderStatus}
@@ -91,8 +83,8 @@ function OrderRow({ order }: { order: OrderSummary }) {
 }
 
 function formatShortDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
   });
 }

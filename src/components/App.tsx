@@ -1,12 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
-import { GooseClient } from '@/api/client';
-import { ensureAuth, type AuthResult } from '@/api/cognito';
-import {
-  fetchBookingConfig,
-  fetchOffers,
-  fetchServiceTypes,
-} from '@/api/catalog';
+import { GooseClient } from "@/api/client";
+import { ensureAuth, type AuthResult } from "@/api/cognito";
+import { fetchBookingConfig, fetchOffers, fetchServiceTypes } from "@/api/catalog";
 import type {
   BookingConfig,
   Offer,
@@ -14,19 +10,19 @@ import type {
   PetProfile,
   ServiceType,
   UserProfile,
-} from '@/api/types';
-import { fetchOrders, fetchPetProfiles, fetchUserProfile } from '@/api/user';
+} from "@/api/types";
+import { fetchOrders, fetchPetProfiles, fetchUserProfile } from "@/api/user";
 
-import BookingForm from './BookingForm';
-import Spinner from './Spinner';
+import BookingForm from "./BookingForm";
+import Spinner from "./Spinner";
 
 type AppState =
-  | { phase: 'authenticating' }
-  | { phase: 'auth-failed'; message: string }
-  | { phase: 'loading'; auth: AuthResult }
-  | { phase: 'load-failed'; message: string }
+  | { phase: "authenticating" }
+  | { phase: "auth-failed"; message: string }
+  | { phase: "loading"; auth: AuthResult }
+  | { phase: "load-failed"; message: string }
   | {
-      phase: 'ready';
+      phase: "ready";
       auth: AuthResult;
       client: GooseClient;
       userProfile: UserProfile;
@@ -38,7 +34,7 @@ type AppState =
     };
 
 export default function App() {
-  const [state, setState] = useState<AppState>({ phase: 'authenticating' });
+  const [state, setState] = useState<AppState>({ phase: "authenticating" });
   const clientRef = useRef<GooseClient | null>(null);
 
   // Phase 1: Authentication
@@ -47,18 +43,18 @@ export default function App() {
       const auth = await ensureAuth();
       if (!auth) {
         setState({
-          phase: 'auth-failed',
-          message: 'Please log in to Bay View Bark first.',
+          phase: "auth-failed",
+          message: "Please log in to Bay View Bark first.",
         });
         return;
       }
-      setState({ phase: 'loading', auth });
+      setState({ phase: "loading", auth });
     })();
   }, []);
 
   // Phase 2: Data loading
   useEffect(() => {
-    if (state.phase !== 'loading') return;
+    if (state.phase !== "loading") return;
 
     const auth = state.auth;
     const client = new GooseClient(auth.token);
@@ -66,18 +62,17 @@ export default function App() {
 
     (async () => {
       try {
-        const [userProfile, pets, serviceTypes, offers, config, orders] =
-          await Promise.all([
-            fetchUserProfile(client, auth.lupId),
-            fetchPetProfiles(client, auth.lupId),
-            fetchServiceTypes(client),
-            fetchOffers(client),
-            fetchBookingConfig(client, 'boarding'),
-            fetchOrders(client),
-          ]);
+        const [userProfile, pets, serviceTypes, offers, config, orders] = await Promise.all([
+          fetchUserProfile(client, auth.lupId),
+          fetchPetProfiles(client, auth.lupId),
+          fetchServiceTypes(client),
+          fetchOffers(client),
+          fetchBookingConfig(client, "boarding"),
+          fetchOrders(client),
+        ]);
 
         setState({
-          phase: 'ready',
+          phase: "ready",
           auth,
           client,
           userProfile,
@@ -90,25 +85,25 @@ export default function App() {
       } catch (err: any) {
         if (err?.status === 401 || err?.status === 403) {
           setState({
-            phase: 'auth-failed',
-            message: 'Session expired. Please log in again.',
+            phase: "auth-failed",
+            message: "Session expired. Please log in again.",
           });
         } else {
           setState({
-            phase: 'load-failed',
-            message: err?.message ?? 'Failed to load booking data.',
+            phase: "load-failed",
+            message: err?.message ?? "Failed to load booking data.",
           });
         }
       }
     })();
-  }, [state.phase === 'loading' ? state.auth : null]);
+  }, [state.phase === "loading" ? state.auth : null]);
 
   // Render based on state
-  if (state.phase === 'authenticating') {
+  if (state.phase === "authenticating") {
     return <Spinner message="Signing in..." />;
   }
 
-  if (state.phase === 'auth-failed') {
+  if (state.phase === "auth-failed") {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6 text-center">
         <div className="w-16 h-16 rounded-full bg-danger/10 flex items-center justify-center">
@@ -132,11 +127,11 @@ export default function App() {
     );
   }
 
-  if (state.phase === 'loading') {
+  if (state.phase === "loading") {
     return <Spinner message="Loading your booking info..." />;
   }
 
-  if (state.phase === 'load-failed') {
+  if (state.phase === "load-failed") {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6 text-center">
         <p className="text-danger font-medium">{state.message}</p>
@@ -163,16 +158,12 @@ export default function App() {
       <header className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-lg font-bold text-text">Bay View Bark</h1>
-          <p className="text-sm text-text-secondary">
-            {state.userProfile.firstName}
-          </p>
+          <p className="text-sm text-text-secondary">{state.userProfile.firstName}</p>
         </div>
         {activePet && (
           <div className="flex items-center gap-2 bg-bvb-teal/10 rounded-full px-3 py-1.5">
             <span className="text-base">🐾</span>
-            <span className="text-sm font-semibold text-bvb-teal-d">
-              {activePet.displayName}
-            </span>
+            <span className="text-sm font-semibold text-bvb-teal-d">{activePet.displayName}</span>
           </div>
         )}
       </header>

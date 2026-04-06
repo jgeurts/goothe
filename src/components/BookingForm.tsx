@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from "react";
 
-import type { GooseClient } from '@/api/client';
+import type { GooseClient } from "@/api/client";
 import {
   createReservation,
   searchPetAddons,
   searchPrimary,
   updateReservation,
-} from '@/api/booking';
+} from "@/api/booking";
 import type {
   Offer,
   OrderSummary,
@@ -14,23 +14,17 @@ import type {
   SearchResult,
   ServiceType,
   UserProfile,
-} from '@/api/types';
-import {
-  addDays,
-  formatDate,
-  hasWeekdayNights,
-  hasWeekendNights,
-  nightCount,
-} from '@/lib/dates';
-import { defaultCheckInTime, defaultCheckOutTime } from '@/lib/defaults';
-import { estimatePrice, type PriceEstimate } from '@/lib/pricing';
+} from "@/api/types";
+import { addDays, formatDate, hasWeekdayNights, hasWeekendNights, nightCount } from "@/lib/dates";
+import { defaultCheckInTime, defaultCheckOutTime } from "@/lib/defaults";
+import { estimatePrice, type PriceEstimate } from "@/lib/pricing";
 
-import Calendar from './Calendar';
-import type { BookingMode } from './ModeToggle';
-import ModeToggle from './ModeToggle';
-import PriceSummary from './PriceSummary';
-import TimeSelect, { generateTimeSlots } from './TimeSelect';
-import UpcomingBookings from './UpcomingBookings';
+import Calendar from "./Calendar";
+import type { BookingMode } from "./ModeToggle";
+import ModeToggle from "./ModeToggle";
+import PriceSummary from "./PriceSummary";
+import TimeSelect, { generateTimeSlots } from "./TimeSelect";
+import UpcomingBookings from "./UpcomingBookings";
 
 interface BookingFormProps {
   client: GooseClient;
@@ -65,12 +59,12 @@ export default function BookingForm({
   leadTimeMinutes,
   maxBookingWindowMinutes,
 }: BookingFormProps) {
-  const [mode, setMode] = useState<BookingMode>('boarding');
+  const [mode, setMode] = useState<BookingMode>("boarding");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [pmPickup, setPmPickup] = useState(true);
-  const [checkInTime, setCheckInTime] = useState('07:30');
-  const [checkOutTime, setCheckOutTime] = useState('18:00');
+  const [checkInTime, setCheckInTime] = useState("07:30");
+  const [checkOutTime, setCheckOutTime] = useState("18:00");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchData, setSearchData] = useState<SearchResult | null>(null);
@@ -79,21 +73,21 @@ export default function BookingForm({
   const pet = pets[0]; // Primary pet
 
   // Resolve service type IDs
-  const boardingType = serviceTypes.find(s => s.name === 'boarding');
-  const daycareType = serviceTypes.find(s => s.name === 'daycare');
+  const boardingType = serviceTypes.find((s) => s.name === "boarding");
+  const daycareType = serviceTypes.find((s) => s.name === "daycare");
 
   // Resolve offer IDs
   const boardingServiceTypeId = boardingType?.id;
   const daycareServiceTypeId = daycareType?.id;
 
   const boardingOffer = offers.find(
-    o => o.locationServiceTypeId === boardingServiceTypeId && o.type === 'PRIMARY'
+    (o) => o.locationServiceTypeId === boardingServiceTypeId && o.type === "PRIMARY",
   );
   const daycareOffers = offers.filter(
-    o => o.locationServiceTypeId === daycareServiceTypeId && o.type === 'PRIMARY'
+    (o) => o.locationServiceTypeId === daycareServiceTypeId && o.type === "PRIMARY",
   );
   const pmPickupOffers = offers.filter(
-    o => o.locationServiceTypeId === boardingServiceTypeId && o.type === 'PET'
+    (o) => o.locationServiceTypeId === boardingServiceTypeId && o.type === "PET",
   );
 
   // Calendar bounds
@@ -122,38 +116,38 @@ export default function BookingForm({
 
   // Build time dropdown options based on day-of-week
   const checkInOptions = useMemo(() => {
-    if (!startDate) return ['07:00', '07:30'];
+    if (!startDate) return ["07:00", "07:30"];
     const dow = startDate.getDay();
     const period = findPeriodForDay(checkInPeriods, dow);
-    return period ? generateTimeSlots(period.start, period.end) : ['07:00', '07:30'];
+    return period ? generateTimeSlots(period.start, period.end) : ["07:00", "07:30"];
   }, [startDate, checkInPeriods]);
 
   const checkOutOptions = useMemo(() => {
-    if (!endDate) return ['16:00', '16:30', '17:00', '17:30', '18:00'];
+    if (!endDate) return ["16:00", "16:30", "17:00", "17:30", "18:00"];
     const dow = endDate.getDay();
     // Filter periods to AM or PM based on pickup toggle
-    const allPeriods = checkOutPeriods.filter(p =>
-      p.dayOfWeek.some(d => dayNameToNumber(d) === dow)
+    const allPeriods = checkOutPeriods.filter((p) =>
+      p.dayOfWeek.some((d) => dayNameToNumber(d) === dow),
     );
     if (pmPickup) {
       // PM periods (start >= 12:00)
-      const pmPeriod = allPeriods.find(p => parseInt(p.start) >= 12);
+      const pmPeriod = allPeriods.find((p) => parseInt(p.start) >= 12);
       return pmPeriod
         ? generateTimeSlots(pmPeriod.start, pmPeriod.end)
-        : ['16:00', '16:30', '17:00', '17:30', '18:00'];
+        : ["16:00", "16:30", "17:00", "17:30", "18:00"];
     } else {
       // AM periods (start < 12:00)
-      const amPeriod = allPeriods.find(p => parseInt(p.start) < 12);
+      const amPeriod = allPeriods.find((p) => parseInt(p.start) < 12);
       return amPeriod
         ? generateTimeSlots(amPeriod.start, amPeriod.end)
-        : ['07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+        : ["07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00"];
     }
   }, [endDate, pmPickup, checkOutPeriods]);
 
   // Search for availability when dates are selected (boarding)
   useEffect(() => {
-    if (mode !== 'boarding' || !startDate || !endDate || !pet) return;
-    const serviceType = 'boarding';
+    if (mode !== "boarding" || !startDate || !endDate || !pet) return;
+    const serviceType = "boarding";
     const start = formatDate(startDate);
     const end = formatDate(endDate);
 
@@ -175,15 +169,14 @@ export default function BookingForm({
 
   // Price estimate
   const priceEstimate: PriceEstimate | null = useMemo(() => {
-    if (mode !== 'boarding' || !startDate || !endDate) return null;
+    if (mode !== "boarding" || !startDate || !endDate) return null;
 
     const nights = nightCount(startDate, endDate);
     if (nights <= 0) return null;
 
     // Use search data rate if available, fallback to $70
     const rate =
-      searchData?.results[0]?.availabilityGroups[0]?.availabilities[0]?.price
-        ?.rate ?? 70;
+      searchData?.results[0]?.availabilityGroups[0]?.availabilities[0]?.price?.rate ?? 70;
 
     // PM pickup rates from search or fallback
     let pmMonFriRate = 45.5;
@@ -192,12 +185,11 @@ export default function BookingForm({
     if (petSearchData?.results) {
       for (const r of petSearchData.results) {
         const name = r.offer.name.toLowerCase();
-        const offerRate =
-          r.availabilityGroups[0]?.availabilities[0]?.price?.rate;
+        const offerRate = r.availabilityGroups[0]?.availabilities[0]?.price?.rate;
         if (offerRate) {
-          if (name.includes('mon-fri') || name.includes('mon-fre')) {
+          if (name.includes("mon-fri") || name.includes("mon-fre")) {
             pmMonFriRate = offerRate;
-          } else if (name.includes('sat') && name.includes('sun')) {
+          } else if (name.includes("sat") && name.includes("sun")) {
             pmSatSunRate = offerRate;
           }
         }
@@ -217,7 +209,7 @@ export default function BookingForm({
 
   // Daycare rate
   const daycareRate = useMemo(() => {
-    if (mode !== 'daycare' || !startDate) return undefined;
+    if (mode !== "daycare" || !startDate) return undefined;
     const dow = startDate.getDay();
     // Saturday = different offer/rate
     return dow === 6 ? 38.0 : 45.5;
@@ -237,28 +229,29 @@ export default function BookingForm({
     setError(null);
 
     try {
-      const serviceType = mode === 'boarding' ? 'boarding' : 'daycare';
+      const serviceType = mode === "boarding" ? "boarding" : "daycare";
       let primaryOfferId: string;
       const petOfferIds: Array<{ id: string }> = [];
 
-      if (mode === 'boarding') {
-        primaryOfferId = boardingOffer?.id ?? '';
+      if (mode === "boarding") {
+        primaryOfferId = boardingOffer?.id ?? "";
 
         // Add PM pickup offers if enabled
         if (pmPickup) {
           if (hasWeekdayNights(startDate, endDate)) {
-            const monFri = pmPickupOffers.find(o =>
-              o.name.toLowerCase().includes('mon-fri') ||
-              o.name.toLowerCase().includes('mon-fre')
+            const monFri = pmPickupOffers.find(
+              (o) =>
+                o.name.toLowerCase().includes("mon-fri") ||
+                o.name.toLowerCase().includes("mon-fre"),
             );
             if (monFri) petOfferIds.push({ id: monFri.id });
           }
           if (hasWeekendNights(startDate, endDate)) {
             const satSun = pmPickupOffers.find(
-              o =>
-                o.name.toLowerCase().includes('sat') &&
-                o.name.toLowerCase().includes('sun') &&
-                !o.name.toLowerCase().includes('2nd')
+              (o) =>
+                o.name.toLowerCase().includes("sat") &&
+                o.name.toLowerCase().includes("sun") &&
+                !o.name.toLowerCase().includes("2nd"),
             );
             if (satSun) petOfferIds.push({ id: satSun.id });
           }
@@ -268,17 +261,15 @@ export default function BookingForm({
         const dow = startDate.getDay();
         const daycareOffer =
           dow === 6
-            ? daycareOffers.find(o => o.name.toLowerCase().includes('saturday'))
+            ? daycareOffers.find((o) => o.name.toLowerCase().includes("saturday"))
             : daycareOffers.find(
-                o =>
-                  o.name.toLowerCase().includes('mon') &&
-                  o.name.toLowerCase().includes('fri')
+                (o) => o.name.toLowerCase().includes("mon") && o.name.toLowerCase().includes("fri"),
               );
-        primaryOfferId = daycareOffer?.id ?? '';
+        primaryOfferId = daycareOffer?.id ?? "";
       }
 
       if (!primaryOfferId) {
-        setError('Could not find the right offer. Please try again.');
+        setError("Could not find the right offer. Please try again.");
         setSubmitting(false);
         return;
       }
@@ -304,20 +295,19 @@ export default function BookingForm({
         phone: userProfile.phone,
         email: userProfile.email,
         street: userProfile.streetAddress,
-        street2: userProfile.streetAddress2 ?? '',
+        street2: userProfile.streetAddress2 ?? "",
         city: userProfile.city,
         state: userProfile.state,
         zip: userProfile.zipCode,
       });
 
       // 3. Redirect to Goose payment page
-      window.location.href =
-        'https://booking.goose.pet/bay-view-bark/booking/payment';
+      window.location.href = "https://booking.goose.pet/bay-view-bark/booking/payment";
     } catch (err: any) {
       if (err?.status === 401 || err?.status === 403) {
-        setError('Session expired. Please log in and try again.');
+        setError("Session expired. Please log in and try again.");
       } else {
-        setError(err?.message ?? 'Something went wrong. Please try again.');
+        setError(err?.message ?? "Something went wrong. Please try again.");
       }
       setSubmitting(false);
     }
@@ -337,12 +327,18 @@ export default function BookingForm({
   ]);
 
   const nights = startDate && endDate ? nightCount(startDate, endDate) : 0;
-  const hasSelection = mode === 'boarding' ? nights > 0 : !!startDate;
+  const hasSelection = mode === "boarding" ? nights > 0 : !!startDate;
 
   return (
     <div className="space-y-5">
       {/* Mode toggle */}
-      <ModeToggle mode={mode} onChange={m => { setMode(m); handleClear(); }} />
+      <ModeToggle
+        mode={mode}
+        onChange={(m) => {
+          setMode(m);
+          handleClear();
+        }}
+      />
 
       {/* Calendar */}
       <Calendar
@@ -357,9 +353,9 @@ export default function BookingForm({
       />
 
       {/* Selection summary */}
-      {hasSelection && mode === 'boarding' && (
+      {hasSelection && mode === "boarding" && (
         <p className="text-sm text-text-secondary text-center">
-          {nights} night{nights !== 1 ? 's' : ''} selected
+          {nights} night{nights !== 1 ? "s" : ""} selected
         </p>
       )}
 
@@ -378,12 +374,12 @@ export default function BookingForm({
             options={checkOutOptions}
             onChange={setCheckOutTime}
           />
-          {mode === 'boarding' && (
+          {mode === "boarding" && (
             <label className="flex items-center gap-3 pt-1 cursor-pointer">
               <input
                 type="checkbox"
                 checked={pmPickup}
-                onChange={e => setPmPickup(e.target.checked)}
+                onChange={(e) => setPmPickup(e.target.checked)}
                 className="w-5 h-5 rounded border-border text-bvb-teal focus:ring-bvb-teal"
               />
               <span className="text-sm font-medium">PM Pickup</span>
@@ -394,18 +390,12 @@ export default function BookingForm({
 
       {/* Price summary */}
       {hasSelection && (
-        <PriceSummary
-          estimate={priceEstimate}
-          mode={mode}
-          daycareRate={daycareRate}
-        />
+        <PriceSummary estimate={priceEstimate} mode={mode} daycareRate={daycareRate} />
       )}
 
       {/* Error */}
       {error && (
-        <div className="bg-danger/10 text-danger text-sm rounded-xl px-4 py-3">
-          {error}
-        </div>
+        <div className="bg-danger/10 text-danger text-sm rounded-xl px-4 py-3">{error}</div>
       )}
 
       {/* Submit button */}
@@ -416,7 +406,7 @@ export default function BookingForm({
           disabled={submitting}
           className="w-full py-3.5 rounded-xl font-semibold text-white bg-bvb-teal hover:bg-bvb-teal-d active:bg-bvb-teal-d transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
-          {submitting ? 'Creating Booking...' : 'Book & Pay'}
+          {submitting ? "Creating Booking..." : "Book & Pay"}
         </button>
       )}
 
@@ -429,9 +419,9 @@ export default function BookingForm({
 /** Find the time period matching a day-of-week number */
 function findPeriodForDay(
   periods: Array<{ dayOfWeek: string[]; start: string; end: string }>,
-  dow: number
+  dow: number,
 ) {
-  return periods.find(p => p.dayOfWeek.some(d => dayNameToNumber(d) === dow));
+  return periods.find((p) => p.dayOfWeek.some((d) => dayNameToNumber(d) === dow));
 }
 
 function dayNameToNumber(name: string): number {

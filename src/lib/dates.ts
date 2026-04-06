@@ -33,11 +33,11 @@ export function hasWeekendNights(start: Date, end: Date): boolean {
 }
 
 export function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0] ?? '';
+  return date.toISOString().split("T")[0] ?? "";
 }
 
 export function parseDate(str: string): Date {
-  const [y, m, d] = str.split('-').map(Number);
+  const [y, m, d] = str.split("-").map(Number);
   return new Date(y!, m! - 1, d!);
 }
 
@@ -66,20 +66,20 @@ export function isAfter(a: Date, b: Date): boolean {
 /** Get month name */
 export function monthName(month: number): string {
   return [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ][month]!;
 }
 
 /** Get short day names */
-export const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
+export const DAY_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as const;

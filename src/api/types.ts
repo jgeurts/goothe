@@ -53,7 +53,7 @@ export interface Offer {
   id: string;
   name: string;
   displayName: string;
-  type: 'PRIMARY' | 'PET' | 'SERVICE' | 'VOUCHER_OFFER';
+  type: "PRIMARY" | "PET" | "SERVICE" | "VOUCHER_OFFER";
   locationServiceTypeId: string;
   locationSpeciesId?: string;
 }
