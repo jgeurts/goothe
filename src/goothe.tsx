@@ -1,7 +1,12 @@
-import { StrictMode } from "react";
+import { Component, StrictMode } from "react";
+import type { ErrorInfo, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "@/components/App";
+
+// Catch any unhandled errors and show them visibly
+window.addEventListener("error", (e) => showFatalError(e.error ?? e.message));
+window.addEventListener("unhandledrejection", (e) => showFatalError(e.reason));
 
 main();
 
@@ -11,25 +16,96 @@ function main() {
     return;
   }
 
-  // Clear the existing Goose UI from the page body
-  document.body.replaceChildren();
+  try {
+    // Clear the existing Goose UI from the page body
+    document.body.replaceChildren();
 
-  // Remove host page stylesheets that could conflict (keep our goothe CSS)
-  for (const el of document.head.querySelectorAll('link[rel="stylesheet"], style')) {
-    if (!el.getAttribute("href")?.includes("goothe")) {
-      el.remove();
+    // Remove host page stylesheets that could conflict (keep our goothe CSS)
+    for (const el of document.head.querySelectorAll('link[rel="stylesheet"], style')) {
+      if (!el.getAttribute("href")?.includes("goothe")) {
+        el.remove();
+      }
     }
+
+    document.title = "Bay View Bark";
+    addViewportMeta();
+    addBlankFavicon();
+    addGoogleFont();
+
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    createRoot(container).render(
+      <StrictMode>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </StrictMode>,
+    );
+  } catch (err) {
+    showFatalError(err);
+  }
+}
+
+function showFatalError(err: unknown) {
+  if (!document.body) return;
+  const msg = err instanceof Error ? err.message + "\n" + err.stack : String(err);
+  document.body.innerHTML = `<div style="padding:2rem;font-family:system-ui;max-width:480px;margin:0 auto">
+    <h1 style="color:#ef4444;font-size:1.25rem;margin-bottom:1rem">Goothe failed to load</h1>
+    <pre style="background:#f8f9fa;padding:1rem;border-radius:0.5rem;overflow-x:auto;font-size:0.75rem;white-space:pre-wrap;word-break:break-word;color:#475569">${msg}</pre>
+    <a href="https://booking.goose.pet/bay-view-bark/" style="display:inline-block;margin-top:1rem;color:#5f9ea0;font-weight:600">Back to Bay View Bark</a>
+  </div>`;
+  console.error("Goothe:", err);
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
   }
 
-  document.title = "Bay View Bark";
-  addViewportMeta();
-  addBlankFavicon();
-  addGoogleFont();
-  createAppRoot().render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-  );
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("Goothe render error:", error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: "2rem", fontFamily: "system-ui", maxWidth: 480, margin: "0 auto" }}>
+          <h1 style={{ color: "#ef4444", fontSize: "1.25rem", marginBottom: "1rem" }}>
+            Something went wrong
+          </h1>
+          <pre
+            style={{
+              background: "#f8f9fa",
+              padding: "1rem",
+              borderRadius: "0.5rem",
+              fontSize: "0.75rem",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              color: "#475569",
+            }}
+          >
+            {this.state.error.message}
+            {"\n"}
+            {this.state.error.stack}
+          </pre>
+          <a
+            href="https://booking.goose.pet/bay-view-bark/"
+            style={{
+              display: "inline-block",
+              marginTop: "1rem",
+              color: "#5f9ea0",
+              fontWeight: 600,
+            }}
+          >
+            Back to Bay View Bark
+          </a>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function addViewportMeta() {
@@ -51,8 +127,4 @@ function addGoogleFont() {
   link.rel = "stylesheet";
   link.href = "https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap";
   document.head.appendChild(link);
-}
-
-function createAppRoot() {
-  return createRoot(document.body.appendChild(document.createElement("div")));
 }
