@@ -148,6 +148,26 @@
         padding: 0.125rem 0.375rem;
         border-radius: 0.25rem;
       }
+      .code-box {
+        display: block;
+        width: 100%;
+        margin-top: 0.75rem;
+        padding: 0.625rem 0.75rem;
+        font-family: ui-monospace, "SF Mono", monospace;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: #475569;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        resize: none;
+        cursor: text;
+        word-break: break-all;
+      }
+      .code-box:focus {
+        outline: 2px solid #5f9ea0;
+        outline-offset: -1px;
+      }
     </style>
   </head>
   <body>
@@ -167,7 +187,10 @@
         >
           Goothe
         </a>
-        <p class="hint">Drag the button above to your bookmarks bar</p>
+        <p class="hint">Drag the button above to your bookmarks bar, or copy the code below</p>
+        <textarea class="code-box" readonly onclick="this.select()" rows="3">
+javascript:void((function(){if(!location.hostname.includes('booking.goose.pet')){alert('Navigate to booking.goose.pet first');return}var e=document.getElementById('goothe');if(e){e.remove();return}var b='https://jgeurts.github.io/goothe/';var l=document.createElement('link');l.rel='stylesheet';l.href=b+'goothe.css';document.head.appendChild(l);var s=document.createElement('script');s.type='module';s.src=b+'goothe.js';document.head.appendChild(s)})())</textarea
+        >
       </div>
 
       <div class="section">
@@ -214,6 +237,9 @@
           Goothe (Dev)
         </a>
         <p class="hint">Loads from localhost:3000 with hot reload</p>
+        <textarea class="code-box" readonly onclick="this.select()" rows="3">
+javascript:void((function(){if(!location.hostname.includes('booking.goose.pet')){alert('Navigate to booking.goose.pet first');return}var e=document.getElementById('goothe');if(e){e.remove();return}var b='http://localhost:3000/goothe/';var l=document.createElement('link');l.rel='stylesheet';l.href=b+'goothe.css';document.head.appendChild(l);var s=document.createElement('script');s.type='module';s.src=b+'goothe.js';document.head.appendChild(s)})())</textarea
+        >
       </div>
     </div>
   </body>
