@@ -13,7 +13,7 @@ export default defineConfig({
   },
   build: {
     outDir: '../dist',
-    emptyOutDir: false,
+    emptyOutDir: true,
     rolldownOptions: {
       input: ['src/goothe.tsx', 'src/goothe.css'],
       output: {

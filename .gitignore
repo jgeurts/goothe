@@ -5,4 +5,3 @@ tsconfig.tsbuildinfo
 .DS_Store
 .vite
 .idea
-package-lock.json
