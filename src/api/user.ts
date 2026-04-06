@@ -17,7 +17,7 @@ export async function fetchPetProfiles(client: GooseClient, lupId: string): Prom
 }
 
 /** Fetch recent orders */
-export async function fetchOrders(client: GooseClient, limit = 5): Promise<OrderSummary[]> {
+export async function fetchOrders(client: GooseClient, limit = 25): Promise<OrderSummary[]> {
   const resp = await client.get<{ results: OrderSummary[] }>(
     `/orders?limit=${limit}&includes[]=invoices.items.petRelations&sort=updatedAt&order=desc`,
   );

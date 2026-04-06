@@ -7,14 +7,7 @@ import {
   searchPrimary,
   updateReservation,
 } from "@/api/booking";
-import type {
-  Offer,
-  OrderSummary,
-  PetProfile,
-  SearchResult,
-  ServiceType,
-  UserProfile,
-} from "@/api/types";
+import type { Offer, PetProfile, SearchResult, ServiceType, UserProfile } from "@/api/types";
 import { addDays, formatDate, hasWeekdayNights, hasWeekendNights, nightCount } from "@/lib/dates";
 import { defaultCheckInTime, defaultCheckOutTime } from "@/lib/defaults";
 import { estimatePrice, type PriceEstimate } from "@/lib/pricing";
@@ -24,7 +17,6 @@ import type { BookingMode } from "./ModeToggle";
 import ModeToggle from "./ModeToggle";
 import PriceSummary from "./PriceSummary";
 import TimeSelect, { generateTimeSlots } from "./TimeSelect";
-import UpcomingBookings from "./UpcomingBookings";
 
 interface BookingFormProps {
   client: GooseClient;
@@ -32,7 +24,6 @@ interface BookingFormProps {
   pets: PetProfile[];
   serviceTypes: ServiceType[];
   offers: Offer[];
-  orders: OrderSummary[];
   checkInPeriods: Array<{
     dayOfWeek: string[];
     start: string;
@@ -53,7 +44,6 @@ export default function BookingForm({
   pets,
   serviceTypes,
   offers,
-  orders,
   checkInPeriods,
   checkOutPeriods,
   leadTimeMinutes,
@@ -331,6 +321,8 @@ export default function BookingForm({
 
   return (
     <div className="space-y-5">
+      <h2 className="text-base font-bold text-text">New Booking</h2>
+
       {/* Mode toggle */}
       <ModeToggle
         mode={mode}
@@ -409,9 +401,6 @@ export default function BookingForm({
           {submitting ? "Creating Booking..." : "Book & Pay"}
         </button>
       )}
-
-      {/* Upcoming bookings */}
-      <UpcomingBookings orders={orders} />
     </div>
   );
 }

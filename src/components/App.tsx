@@ -15,6 +15,7 @@ import { fetchOrders, fetchPetProfiles, fetchUserProfile } from "@/api/user";
 
 import BookingForm from "./BookingForm";
 import Spinner from "./Spinner";
+import UpcomingBookings from "./UpcomingBookings";
 
 type AppState =
   | { phase: "authenticating" }
@@ -153,9 +154,9 @@ export default function App() {
   const activePet = state.pets[0];
 
   return (
-    <div className="max-w-md mx-auto px-4 py-5 pb-10">
+    <div className="max-w-md mx-auto px-4 py-5 pb-10 space-y-6">
       {/* Header */}
-      <header className="flex items-center justify-between mb-5">
+      <header className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold text-text">Bay View Bark</h1>
           <p className="text-sm text-text-secondary">{state.userProfile.firstName}</p>
@@ -168,14 +169,16 @@ export default function App() {
         )}
       </header>
 
-      {/* Booking form */}
+      {/* Existing bookings — shown first for context */}
+      <UpcomingBookings orders={state.orders} />
+
+      {/* New booking form */}
       <BookingForm
         client={state.client}
         userProfile={state.userProfile}
         pets={state.pets}
         serviceTypes={state.serviceTypes}
         offers={state.offers}
-        orders={state.orders}
         checkInPeriods={checkInPeriods}
         checkOutPeriods={checkOutPeriods}
         leadTimeMinutes={state.config.leadTime ?? 1440}
