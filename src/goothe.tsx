@@ -4,9 +4,11 @@ import { createRoot } from "react-dom/client";
 
 import App from "@/components/App";
 
-// Catch any unhandled errors and show them visibly
-window.addEventListener("error", (e) => showFatalError(e.error ?? e.message));
-window.addEventListener("unhandledrejection", (e) => showFatalError(e.reason));
+// Stop Goose scripts from running after we take over the page
+const gooseScripts = document.querySelectorAll(
+  'script:not([type="module"]), script[src*="goose"], script[src*="chunk"]',
+);
+for (const s of gooseScripts) s.remove();
 
 main();
 
@@ -47,14 +49,18 @@ function main() {
 }
 
 function showFatalError(err: unknown) {
-  if (!document.body) return;
   const msg = err instanceof Error ? err.message + "\n" + err.stack : String(err);
-  document.body.innerHTML = `<div style="padding:2rem;font-family:system-ui;max-width:480px;margin:0 auto">
-    <h1 style="color:#ef4444;font-size:1.25rem;margin-bottom:1rem">Goothe failed to load</h1>
-    <pre style="background:#f8f9fa;padding:1rem;border-radius:0.5rem;overflow-x:auto;font-size:0.75rem;white-space:pre-wrap;word-break:break-word;color:#475569">${msg}</pre>
-    <a href="https://booking.goose.pet/bay-view-bark/" style="display:inline-block;margin-top:1rem;color:#5f9ea0;font-weight:600">Back to Bay View Bark</a>
-  </div>`;
-  console.error("Goothe:", err);
+  // Don't wipe the page — just log. ErrorBoundary handles render errors.
+  console.error("Goothe:", msg);
+
+  // Only show UI if body is empty (nothing rendered yet)
+  if (document.body && document.body.children.length === 0) {
+    document.body.innerHTML = `<div style="padding:2rem;font-family:system-ui;max-width:480px;margin:0 auto">
+      <h1 style="color:#ef4444;font-size:1.25rem;margin-bottom:1rem">Goothe failed to load</h1>
+      <pre style="background:#f8f9fa;padding:1rem;border-radius:0.5rem;overflow-x:auto;font-size:0.75rem;white-space:pre-wrap;word-break:break-word;color:#475569">${msg}</pre>
+      <a href="https://booking.goose.pet/bay-view-bark/" style="display:inline-block;margin-top:1rem;color:#5f9ea0;font-weight:600">Back to Bay View Bark</a>
+    </div>`;
+  }
 }
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
