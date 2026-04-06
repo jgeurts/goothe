@@ -19,8 +19,18 @@ function main() {
   }
 
   try {
+    console.log("[goothe] main() starting");
+
     // Clear the existing Goose UI from the page body
     document.body.replaceChildren();
+
+    // Show an immediate loading indicator (inline styles, no CSS dependency)
+    const loader = document.createElement("div");
+    loader.id = "goothe-loader";
+    loader.style.cssText =
+      "display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui;color:#5f9ea0;font-size:1rem";
+    loader.textContent = "Loading Goothe...";
+    document.body.appendChild(loader);
 
     // Remove host page stylesheets that could conflict (keep our goothe CSS)
     for (const el of document.head.querySelectorAll('link[rel="stylesheet"], style')) {
@@ -34,8 +44,9 @@ function main() {
     addBlankFavicon();
     addGoogleFont();
 
+    console.log("[goothe] mounting React");
     const container = document.createElement("div");
-    document.body.appendChild(container);
+    document.body.replaceChildren(container);
     createRoot(container).render(
       <StrictMode>
         <ErrorBoundary>
@@ -43,7 +54,9 @@ function main() {
         </ErrorBoundary>
       </StrictMode>,
     );
+    console.log("[goothe] render() called");
   } catch (err) {
+    console.error("[goothe] main() caught:", err);
     showFatalError(err);
   }
 }
